@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Component
 @Scope("prototype")
 @Route(value = "npcsList", layout = MainLayout.class)
-@PageTitle("Contacts | Vaadin CRM")
+@PageTitle("Scripts Creator")
 public class NpcView extends VerticalLayout {
 
     private NpcForm form = new NpcForm();
@@ -70,14 +70,14 @@ public class NpcView extends VerticalLayout {
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> filterNpc());
 
-        Button addContactButton = new Button("Add contact", click -> addContact());
+        Button addNpcButton = new Button("Add npc", click -> addNpc());
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterText, addContactButton);
+        HorizontalLayout toolbar = new HorizontalLayout(filterText, addNpcButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
 
-    private void addContact() {
+    private void addNpc() {
         grid.asSingleSelect().clear();
 
     }

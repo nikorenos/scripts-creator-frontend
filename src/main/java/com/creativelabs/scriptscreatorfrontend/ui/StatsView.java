@@ -7,9 +7,9 @@ import com.vaadin.flow.router.Route;
 
 @PageTitle("Dashboard | Scripts Creator")
 @Route(value = "dashboard", layout = MainLayout.class)
-public class DashboardView extends VerticalLayout {
+public class StatsView extends VerticalLayout {
 
-    public DashboardView() {
+    public StatsView() {
 
         addClassName("dashboard-view");
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);

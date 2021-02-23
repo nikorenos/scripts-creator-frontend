@@ -1,6 +1,6 @@
 package com.creativelabs.scriptscreatorfrontend;
 
-import com.creativelabs.scriptscreatorfrontend.ui.DashboardView;
+import com.creativelabs.scriptscreatorfrontend.ui.StatsView;
 import com.creativelabs.scriptscreatorfrontend.ui.NpcView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -34,12 +34,12 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        RouterLink listLink = new RouterLink("List", NpcView.class);
+        RouterLink listLink = new RouterLink("Npc List", NpcView.class);
         listLink.setHighlightCondition(HighlightConditions.sameLocation());
 
         addToDrawer(new VerticalLayout(
                 listLink,
-                new RouterLink("Dashboard", DashboardView.class)
+                new RouterLink("Stats", StatsView.class)
         ));
     }
 }
