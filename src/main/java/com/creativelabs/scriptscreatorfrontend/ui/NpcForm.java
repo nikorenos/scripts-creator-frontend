@@ -12,12 +12,12 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 
 @Route(value = "npcForm", layout = MainLayout.class)
 public class NpcForm extends FormLayout {
-
     TextField name = new TextField("Name");
     TextField description = new TextField("Description");
 
@@ -25,8 +25,6 @@ public class NpcForm extends FormLayout {
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
-
-    //Binder<NpcDto> binder = new BeanValidationBinder<>(NpcDto.class);
     Binder<NpcDto> binder = new Binder<>(NpcDto.class);
     private NpcDto npcDto;
 
@@ -39,6 +37,11 @@ public class NpcForm extends FormLayout {
                 description,
                 createButtonsLayout()
         );
+    }
+
+    public void setNpc(NpcDto npcDto) {
+        this.npcDto = npcDto;
+        binder.readBean(npcDto);
     }
 
     private Component createButtonsLayout() {
@@ -58,19 +61,13 @@ public class NpcForm extends FormLayout {
         return new HorizontalLayout(save, delete, close);
     }
 
-    public void setNpcDto(NpcDto npcDto) {
-        this.npcDto = npcDto;
-        //binder.readBean(npcDto);
-    }
-
     private void validateAndSave() {
-
-        /*try {
+        try {
             binder.writeBean(npcDto);
             fireEvent(new NpcFormEvent.SaveEvent(this, npcDto));
         } catch (ValidationException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     // Events
@@ -82,12 +79,17 @@ public class NpcForm extends FormLayout {
             this.npcDto = npcDto;
         }
 
-        public static class SaveEvent extends NpcFormEvent {
+        public NpcDto getContact() {
+            return npcDto;
+        }
+    }
+
+    public static class SaveEvent extends NpcFormEvent {
             SaveEvent(NpcForm source, NpcDto npc) {
                 super(source, npc);
             }
-        }
     }
+
 
     public static class DeleteEvent extends NpcFormEvent {
         DeleteEvent(NpcForm source, NpcDto npcDto) {

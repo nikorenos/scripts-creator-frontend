@@ -40,28 +40,30 @@ public class NpcView extends VerticalLayout {
         configureGrid();
 
 
-        /*form.addListener(ContactForm.SaveEvent.class, this::saveContact);
-        form.addListener(ContactForm.DeleteEvent.class, this::deleteContact);
-        form.addListener(ContactForm.CloseEvent.class, e -> closeEditor());*/
+        form.addListener(NpcForm.SaveEvent.class, this::saveContact);
+        form.addListener(NpcForm.DeleteEvent.class, this::deleteContact);
+        form.addListener(NpcForm.CloseEvent.class, e -> closeEditor());
 
-        //Div content = new Div(grid, form);
-        HorizontalLayout content = new HorizontalLayout(grid, form);
+        Div content = new Div(grid, form);
+        //HorizontalLayout content = new HorizontalLayout(grid, form);
         content.addClassName("content");
         content.setSizeFull();
 
         add(getToolBar(), content);
         updateList();
         closeEditor();
-        /*
-        grid.setColumns("title", "author", "publicationYear", "type");
-        HorizontalLayout mainContent = new HorizontalLayout(grid, form);
-        mainContent.setSizeFull();
-        grid.setSizeFull();
+    }
 
-        add(filter, mainContent);
-        setSizeFull();
-        refresh();
-        */
+    private void deleteContact(NpcForm.DeleteEvent evt) {
+        creatorClient.(evt.getContact());
+        updateList();
+        closeEditor();
+    }
+
+    private void saveContact(ContactForm.SaveEvent evt) {
+        contactService.save(evt.getContact());
+        updateList();
+        closeEditor();
     }
 
     private HorizontalLayout getToolBar() {

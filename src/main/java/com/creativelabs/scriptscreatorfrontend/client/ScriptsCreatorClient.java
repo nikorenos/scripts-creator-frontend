@@ -40,4 +40,8 @@ public class ScriptsCreatorClient {
         }
     }
 
+    public void deleteNpc(Long id) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs/" + id)
+                .build().encode().toUri();
+    }
 }
