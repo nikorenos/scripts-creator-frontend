@@ -40,8 +40,34 @@ public class ScriptsCreatorClient {
         }
     }
 
+    public NpcDto getNpc(Long id) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs/" + id)
+                .build().encode().toUri();
+
+        try {
+            NpcDto npcResponse = restTemplate.getForObject(url, NpcDto.class);
+            return (ofNullable(npcResponse).orElse(new NpcDto()));
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(),e);
+            return new NpcDto();
+        }
+    }
+
+    public NpcDto createNpc(NpcDto npcDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs")
+                .build().encode().toUri();
+        return restTemplate.postForObject(url, npcDto, NpcDto.class);
+    }
+
+    public void updateNpc(NpcDto npcDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs")
+                .build().encode().toUri();
+        restTemplate.put(url, npcDto);
+    }
+
     public void deleteNpc(Long id) {
         URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs/" + id)
                 .build().encode().toUri();
+        restTemplate.delete(url);
     }
 }

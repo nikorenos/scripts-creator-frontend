@@ -64,7 +64,7 @@ public class NpcForm extends FormLayout {
     private void validateAndSave() {
         try {
             binder.writeBean(npcDto);
-            fireEvent(new NpcFormEvent.SaveEvent(this, npcDto));
+            fireEvent(new SaveEvent(this, npcDto));
         } catch (ValidationException e) {
             e.printStackTrace();
         }

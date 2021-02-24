@@ -39,8 +39,7 @@ public class NpcView extends VerticalLayout {
         setSizeFull();
         configureGrid();
 
-
-        form.addListener(NpcForm.SaveEvent.class, this::saveContact);
+        form.addListener(NpcForm.SaveEvent.class, this::saveNpc);
         form.addListener(NpcForm.DeleteEvent.class, this::deleteContact);
         form.addListener(NpcForm.CloseEvent.class, e -> closeEditor());
 
@@ -55,13 +54,13 @@ public class NpcView extends VerticalLayout {
     }
 
     private void deleteContact(NpcForm.DeleteEvent evt) {
-        creatorClient.(evt.getContact());
+        creatorClient.deleteNpc(evt.getContact().getId());
         updateList();
         closeEditor();
     }
 
-    private void saveContact(ContactForm.SaveEvent evt) {
-        contactService.save(evt.getContact());
+    private void saveNpc(NpcForm.SaveEvent evt) {
+        creatorClient.createNpc(evt.getContact());
         updateList();
         closeEditor();
     }
@@ -92,6 +91,16 @@ public class NpcView extends VerticalLayout {
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
+    }
+
+    private void editNpc(NpcDto npcDto) {
+        if (npcDto == null) {
+            closeEditor();
+        } else {
+            form.setNpc(npcDto);
+            form.setVisible(true);
+            addClassName("editing");
+        }
     }
 
     private void updateList() {
