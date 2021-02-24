@@ -80,17 +80,14 @@ public class NpcView extends VerticalLayout {
 
     private void addNpc() {
         grid.asSingleSelect().clear();
-
+        editNpc(new NpcDto());
     }
 
     private void configureGrid() {
         grid.addClassName("npc-grid");
         grid.setSizeFull();
         grid.setColumns("name", "description");
-
-
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
-
     }
 
     private void editNpc(NpcDto npcDto) {
@@ -111,7 +108,9 @@ public class NpcView extends VerticalLayout {
     }
 
     private void closeEditor() {
-
+        form.setNpc(null);
+        form.setVisible(false);
+        removeClassName("editing");
     }
 
     public Set findNpcByName(String name) {
