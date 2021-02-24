@@ -84,7 +84,7 @@ public class NpcView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("npc-grid");
         grid.setSizeFull();
-        grid.setColumns("name", "description");
+        grid.setColumns("id", "name", "description");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(evt -> editNpc(evt.getValue()));
