@@ -1,12 +1,10 @@
 package com.creativelabs.scriptscreatorfrontend.ui;
 
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
-import com.creativelabs.scriptscreatorfrontend.books.BookForm;
 import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
 import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
 @PageTitle("Scripts Creator")
 public class NpcView extends VerticalLayout {
 
-    private NpcForm form = new NpcForm();
+    private final NpcForm form = new NpcForm();
     Grid<NpcDto> grid = new Grid<>(NpcDto.class);
     TextField filterText = new TextField();
     @Autowired

@@ -72,7 +72,7 @@ public class NpcForm extends FormLayout {
 
     // Events
     public static abstract class NpcFormEvent extends ComponentEvent<NpcForm> {
-        private NpcDto npcDto;
+        private final NpcDto npcDto;
 
         protected NpcFormEvent(NpcForm source, NpcDto npcDto) {
             super(source, false);
