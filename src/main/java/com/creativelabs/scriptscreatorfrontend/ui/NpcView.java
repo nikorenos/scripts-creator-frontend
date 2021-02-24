@@ -43,8 +43,8 @@ public class NpcView extends VerticalLayout {
         form.addListener(NpcForm.DeleteEvent.class, this::deleteContact);
         form.addListener(NpcForm.CloseEvent.class, e -> closeEditor());
 
-        Div content = new Div(grid, form);
-        //HorizontalLayout content = new HorizontalLayout(grid, form);
+        //Div content = new Div(grid, form);
+        HorizontalLayout content = new HorizontalLayout(grid, form);
         content.addClassName("content");
         content.setSizeFull();
 
@@ -88,6 +88,8 @@ public class NpcView extends VerticalLayout {
         grid.setSizeFull();
         grid.setColumns("name", "description");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
+
+        grid.asSingleSelect().addValueChangeListener(evt -> editNpc(evt.getValue()));
     }
 
     private void editNpc(NpcDto npcDto) {
