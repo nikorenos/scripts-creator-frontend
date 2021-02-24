@@ -1,7 +1,9 @@
 package com.creativelabs.scriptscreatorfrontend.client;
 
 import com.creativelabs.scriptscreatorfrontend.config.ClientConfig;
+import com.creativelabs.scriptscreatorfrontend.config.TrelloConfig;
 import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
+import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ public class ScriptsCreatorClient {
 
     private final RestTemplate restTemplate;
     private final ClientConfig clientConfig;
+    private final TrelloConfig trelloConfig;
 
     public List<NpcDto> getNpcs() {
         URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs")
@@ -50,5 +53,17 @@ public class ScriptsCreatorClient {
         URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs/" + id)
                 .build().encode().toUri();
         restTemplate.delete(url);
+    }
+    public List<TrelloListDto> getTrelloLists() {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello/boards/" +
+                trelloConfig.getBoardId() + "/lists")
+                .build().encode().toUri();
+        try {
+            TrelloListDto[] boardsResponse = restTemplate.getForObject(url, TrelloListDto[].class);
+            return Arrays.asList(ofNullable(boardsResponse).orElse(new TrelloListDto[0]));
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(),e);
+            return new ArrayList<>();
+        }
     }
 }
