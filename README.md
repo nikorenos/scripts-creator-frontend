@@ -23,12 +23,12 @@ Technologies used in project:
 ```
 ### 4. Project
 In order to run project: <br>
-```bash
+
 1) Create a database in MySQL, based on application.properties settings.
 2) Run "ScriptsCreatorApplication" in project_back repository (https://github.com/nikorenos/scripts-creator).
 3) Run "ScriptsCreatorFrontendApplication" in project_front repository (https://github.com/nikorenos/scripts-creator-frontend).
 4) Enter "http://localhost:8082/" in Your browser.
-```
+
 ### 5. Endpoint description
 (work in progress)
 
