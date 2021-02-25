@@ -8,48 +8,51 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Component
 @PageTitle("Stats | Scripts Creator")
 @Route(value = "stats", layout = MainLayout.class)
 public class StatsView extends VerticalLayout {
 
-    @Autowired
     private final ScriptsCreatorClient creatorClient;
-
+    int allNpcs = 0;
+    int amountOfLocations = 0;
+    List<TrelloListDto> locations = new ArrayList<>();
 
     public StatsView(ScriptsCreatorClient creatorClient) {
         this.creatorClient = creatorClient;
 
         addClassName("stats-view");
         setDefaultHorizontalComponentAlignment(Alignment.CENTER);
+
+        add(getContent());
+    }
+
+    private VerticalLayout getContent() {
+        refresh();
         H1 logo = new H1("Stats:");
-        int allNpcs = creatorClient.getNpcs().size();
-        int amountOfLocations = creatorClient.getTrelloLists().size();
-        List<TrelloListDto> locations = creatorClient.getTrelloLists();
-
-
-        Label label1 = new Label("All NPCs in database: " + allNpcs);
-        Label label2 = new Label("All locations in Trello: " + amountOfLocations);
-        Label label3 = new Label("Available locations in Trello: " + displayLocationFromTrello(locations));
-
-        VerticalLayout content = new VerticalLayout(logo,label1, label2, label3);
+        Label labelAllNpcs = new Label("All NPCs in database: " + allNpcs);
+        Label labelAmountOfLocations = new Label("All locations in Trello: " + amountOfLocations);
+        Label labelLocations = new Label("Available locations in Trello: " + displayLocationFromTrello(locations));
+        VerticalLayout content = new VerticalLayout(logo,labelAllNpcs, labelAmountOfLocations, labelLocations);
         content.addClassName("content");
         content.setSizeFull();
-
-        add(content);
-
+        return  content;
     }
 
     public String displayLocationFromTrello(List<TrelloListDto> lists) {
-        String names = "";
+        StringBuilder names = new StringBuilder();
         for (TrelloListDto list : lists) {
-            names = names + list.getName() + ", ";
+            names.append(list.getName()).append(", ");
         }
-        return names;
+        return names.toString();
+    }
+
+    public void refresh() {
+        allNpcs = creatorClient.getNpcs().size();
+        amountOfLocations = creatorClient.getTrelloLists().size();
+        locations = creatorClient.getTrelloLists();
     }
 }
