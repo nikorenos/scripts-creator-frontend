@@ -12,8 +12,8 @@ import com.vaadin.flow.router.Route;
 import java.util.ArrayList;
 import java.util.List;
 
-@PageTitle("Stats | Scripts Creator")
 @Route(value = "stats", layout = MainLayout.class)
+@PageTitle("Stats | Scripts Creator")
 public class StatsView extends VerticalLayout {
 
     private final ScriptsCreatorClient creatorClient;
@@ -31,8 +31,12 @@ public class StatsView extends VerticalLayout {
     }
 
     private VerticalLayout getContent() {
-        refresh();
         H1 logo = new H1("Stats:");
+
+        allNpcs = creatorClient.getNpcs().size();
+        amountOfLocations = creatorClient.getTrelloLists().size();
+        locations = creatorClient.getTrelloLists();
+
         Label labelAllNpcs = new Label("All NPCs in database: " + allNpcs);
         Label labelAmountOfLocations = new Label("All locations in Trello: " + amountOfLocations);
         Label labelLocations = new Label("Available locations in Trello: " + displayLocationFromTrello(locations));
@@ -48,11 +52,5 @@ public class StatsView extends VerticalLayout {
             names.append(list.getName()).append(", ");
         }
         return names.toString();
-    }
-
-    public void refresh() {
-        allNpcs = creatorClient.getNpcs().size();
-        amountOfLocations = creatorClient.getTrelloLists().size();
-        locations = creatorClient.getTrelloLists();
     }
 }

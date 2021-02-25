@@ -11,7 +11,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +20,12 @@ import java.util.stream.Collectors;
 @Component
 @Scope("prototype")
 @Route(value = "npcsList", layout = MainLayout.class)
-@PageTitle("Scripts Creator")
+@PageTitle("Npcs | Scripts Creator")
 public class NpcView extends VerticalLayout {
 
     private final NpcForm form = new NpcForm();
     Grid<NpcDto> grid = new Grid<>(NpcDto.class);
     TextField filterText = new TextField();
-    @Autowired
     private final ScriptsCreatorClient creatorClient;
 
 
