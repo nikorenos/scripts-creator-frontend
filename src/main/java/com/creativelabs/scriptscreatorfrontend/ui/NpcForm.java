@@ -1,13 +1,16 @@
 package com.creativelabs.scriptscreatorfrontend.ui;
 
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
+import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
 import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
+import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -16,25 +19,40 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Route(value = "npcForm", layout = MainLayout.class)
 public class NpcForm extends FormLayout {
+
     TextField name = new TextField("Name");
     TextField description = new TextField("Description");
+    ComboBox<String> location = new ComboBox<>("Location");
+    List<String> locations = new ArrayList<>();
 
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
+
     Binder<NpcDto> binder = new Binder<>(NpcDto.class);
     private NpcDto npcDto;
 
-    public NpcForm() {
+    public NpcForm(ScriptsCreatorClient creatorClient) {
         addClassName("npc-form");
         binder.bindInstanceFields(this);
+        List<TrelloListDto> locationList = creatorClient.getTrelloLists();
+        for (TrelloListDto list : locationList) {
+            locations.add(list.getName());
+        }
+
+        location.setItems(locations);
+        location.setItemLabelGenerator(String::toString);
 
         add(
                 name,
                 description,
+                location,
                 createButtonsLayout()
         );
     }
