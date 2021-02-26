@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @PageTitle("Npcs | Scripts Creator")
 public class NpcView extends VerticalLayout {
 
-    private final NpcForm form = new NpcForm();
+    NpcForm form;
     Grid<NpcDto> grid = new Grid<>(NpcDto.class);
     TextField filterText = new TextField();
     private final ScriptsCreatorClient creatorClient;
@@ -35,11 +35,11 @@ public class NpcView extends VerticalLayout {
         setSizeFull();
         configureGrid();
 
+        form = new NpcForm(creatorClient);
         form.addListener(NpcForm.SaveEvent.class, this::saveNpc);
         form.addListener(NpcForm.DeleteEvent.class, this::deleteContact);
         form.addListener(NpcForm.CloseEvent.class, e -> closeEditor());
 
-        //Div content = new Div(grid, form);
         HorizontalLayout content = new HorizontalLayout(grid, form);
         content.addClassName("content");
         content.setSizeFull();
@@ -82,7 +82,7 @@ public class NpcView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("npc-grid");
         grid.setSizeFull();
-        grid.setColumns("id", "name", "description");
+        grid.setColumns("id", "name", "description", "location");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(evt -> editNpc(evt.getValue()));
