@@ -3,6 +3,7 @@ package com.creativelabs.scriptscreatorfrontend.ui;
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
 import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
 import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
+import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardDto;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -57,6 +58,9 @@ public class NpcView extends VerticalLayout {
 
     private void saveNpc(NpcForm.SaveEvent evt) {
         creatorClient.createNpc(evt.getContact());
+        TrelloCardDto card = new TrelloCardDto(evt.getContact().getName(), evt.getContact().getDescription(), "top", evt.getContact().getLocation());
+        creatorClient.createTrelloCard(card);
+        //evt.getContact().getName(), evt.getContact().getDescription(), "top", evt.getContact().getLocation()
         updateList();
         closeEditor();
     }

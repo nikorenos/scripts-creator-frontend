@@ -19,8 +19,8 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Route(value = "npcForm", layout = MainLayout.class)
 public class NpcForm extends FormLayout {
@@ -125,5 +125,23 @@ public class NpcForm extends FormLayout {
     public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType,
                                                                   ComponentEventListener<T> listener) {
         return getEventBus().addListener(eventType, listener);
+    }
+
+    public static void main(String[] args) {
+
+        HashMap<String, String> test = new HashMap<String, String>();
+        test.put("Village", "123");
+        test.put("City", "444");
+
+        List<String> idList = test.entrySet().stream()
+                .filter(entry -> entry.getKey().equals("City"))
+                .map(entry -> entry.getValue())
+                .collect(Collectors.toList());
+
+
+
+
+        System.out.println(idList.get(0));
+        System.out.println("444");
     }
 }
