@@ -66,11 +66,14 @@ public class ScriptsCreatorClient {
     }
 
     public TrelloCardDto createTrelloCard(TrelloCardDto trelloCardDto) {
-        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello/cards")
-                .queryParam("name", trelloCardDto.getName())
-                .queryParam("desc", trelloCardDto.getShortUrl())
-                .queryParam("pos", trelloCardDto.getPos())
-                .queryParam("idList", trelloCardDto.getIdList()).build().encode().toUri();
-        return restTemplate.postForObject(url, null, TrelloCardDto.class);
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello")
+                .build().encode().toUri();
+        return restTemplate.postForObject(url, trelloCardDto, TrelloCardDto.class);
+    }
+
+    public void updateTrelloCard(String cardId, TrelloCardDto trelloCardDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello" + "/cards/" + cardId)
+                .build().encode().toUri();
+        restTemplate.put(url, TrelloCardDto.class);
     }
 }
