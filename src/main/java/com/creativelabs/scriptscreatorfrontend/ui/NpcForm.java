@@ -19,8 +19,7 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.shared.Registration;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Route(value = "npcForm", layout = MainLayout.class)
 public class NpcForm extends FormLayout {
@@ -97,7 +96,7 @@ public class NpcForm extends FormLayout {
             this.npcDto = npcDto;
         }
 
-        public NpcDto getContact() {
+        public NpcDto getNpc() {
             return npcDto;
         }
     }

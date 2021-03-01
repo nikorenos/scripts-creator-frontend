@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrelloListDto {
+    private String id;
     private String name;
 
     @Override

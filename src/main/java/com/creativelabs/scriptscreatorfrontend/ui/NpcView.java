@@ -3,6 +3,8 @@ package com.creativelabs.scriptscreatorfrontend.ui;
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
 import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
 import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
+import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardDto;
+import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -14,6 +16,9 @@ import com.vaadin.flow.router.Route;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,13 +55,23 @@ public class NpcView extends VerticalLayout {
     }
 
     private void deleteContact(NpcForm.DeleteEvent evt) {
-        creatorClient.deleteNpc(evt.getContact().getId());
+        creatorClient.deleteNpc(evt.getNpc().getId());
         updateList();
         closeEditor();
     }
 
     private void saveNpc(NpcForm.SaveEvent evt) {
-        creatorClient.createNpc(evt.getContact());
+        TrelloCardDto card;
+        if (evt.getNpc().getTrelloCardId() != null) {
+            card = prepareTrelloCard(evt.getNpc());
+            String cardId = evt.getNpc().getTrelloCardId();
+            creatorClient.updateTrelloCard(cardId, card);
+        } else {
+            card = creatorClient.createTrelloCard(prepareTrelloCard(evt.getNpc()));
+            evt.getNpc().setTrelloCardId(card.getId());
+            evt.getNpc().setTrelloCardUrl(card.getShortUrl());
+        }
+        creatorClient.createNpc(evt.getNpc());
         updateList();
         closeEditor();
     }
@@ -82,7 +97,7 @@ public class NpcView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("npc-grid");
         grid.setSizeFull();
-        grid.setColumns("id", "name", "description", "location");
+        grid.setColumns("id", "name", "description", "location", "trelloCardUrl");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
         grid.asSingleSelect().addValueChangeListener(evt -> editNpc(evt.getValue()));
@@ -113,6 +128,22 @@ public class NpcView extends VerticalLayout {
 
     public Set findNpcByName(String name) {
         return creatorClient.getNpcs().stream().filter(npc -> npc.getName().contains(name)).collect(Collectors.toSet());
+    }
+
+    public TrelloCardDto prepareTrelloCard(NpcDto npcDto) {
+        HashMap<String, String> trelloListsMap = new HashMap<>();
+        List<TrelloListDto> trelloLists = creatorClient.getTrelloLists();
+        for (TrelloListDto list : trelloLists) {
+            trelloListsMap.put(list.getName(), list.getId());
+
+        }
+        List<String> list = trelloListsMap.entrySet().stream()
+                .filter(entry -> entry.getKey().equals(npcDto.getLocation()))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toList());
+
+        String idList = list.get(0);
+        return new TrelloCardDto(npcDto.getName(), npcDto.getDescription(), "bottom", idList);
     }
 
 }
