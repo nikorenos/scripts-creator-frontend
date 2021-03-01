@@ -61,8 +61,16 @@ public class NpcView extends VerticalLayout {
     }
 
     private void saveNpc(NpcForm.SaveEvent evt) {
-        TrelloCardDto card = creatorClient.createTrelloCard(prepareTrelloCard(evt.getNpc()));
-        evt.getNpc().setTrelloCardUrl(card.getShortUrl());
+        TrelloCardDto card;
+        if (evt.getNpc().getTrelloCardId() != null) {
+            card = prepareTrelloCard(evt.getNpc());
+            String cardId = evt.getNpc().getTrelloCardId();
+            creatorClient.updateTrelloCard(cardId, card);
+        } else {
+            card = creatorClient.createTrelloCard(prepareTrelloCard(evt.getNpc()));
+            evt.getNpc().setTrelloCardId(card.getId());
+            evt.getNpc().setTrelloCardUrl(card.getShortUrl());
+        }
         creatorClient.createNpc(evt.getNpc());
         updateList();
         closeEditor();
@@ -100,7 +108,6 @@ public class NpcView extends VerticalLayout {
             closeEditor();
         } else {
             form.setNpc(npcDto);
-            //creatorClient.updateTrelloCard(npcDto.getId().toString(), prepareTrelloCard(npcDto));
             form.setVisible(true);
             addClassName("editing");
         }
@@ -136,7 +143,6 @@ public class NpcView extends VerticalLayout {
                 .collect(Collectors.toList());
 
         String idList = list.get(0);
-
         return new TrelloCardDto(npcDto.getName(), npcDto.getDescription(), "bottom", idList);
     }
 
