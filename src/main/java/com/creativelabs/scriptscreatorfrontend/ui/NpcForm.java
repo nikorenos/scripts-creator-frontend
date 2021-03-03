@@ -27,6 +27,7 @@ public class NpcForm extends FormLayout {
     TextField name = new TextField("Name");
     TextField description = new TextField("Description");
     ComboBox<String> location = new ComboBox<>("Location");
+    TextField attachmentUrl = new TextField("Image Url");
     List<String> locations = new ArrayList<>();
 
     Button save = new Button("Save");
@@ -52,6 +53,7 @@ public class NpcForm extends FormLayout {
                 name,
                 description,
                 location,
+                attachmentUrl,
                 createButtonsLayout()
         );
     }

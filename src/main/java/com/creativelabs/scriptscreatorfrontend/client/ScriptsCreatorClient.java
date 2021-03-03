@@ -3,6 +3,7 @@ package com.creativelabs.scriptscreatorfrontend.client;
 import com.creativelabs.scriptscreatorfrontend.config.ClientConfig;
 import com.creativelabs.scriptscreatorfrontend.config.TrelloConfig;
 import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
+import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardAttachmentsDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +70,12 @@ public class ScriptsCreatorClient {
         URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello")
                 .build().encode().toUri();
         return restTemplate.postForObject(url, trelloCardDto, TrelloCardDto.class);
+    }
+
+    public TrelloCardAttachmentsDto createTrelloCardAttachment(String cardId, String imageUrl) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello" + "/cards/" + cardId + "/attachments")
+                .queryParam("url", imageUrl).build().encode().toUri();
+        return restTemplate.postForObject(url, null, TrelloCardAttachmentsDto.class);
     }
 
     public void updateTrelloCard(String cardId, TrelloCardDto trelloCardDto) {
