@@ -76,4 +76,10 @@ public class ScriptsCreatorClient {
                 .build().encode().toUri();
         restTemplate.put(url, trelloCardDto);
     }
+
+    public void deleteTrelloCard(String cardId) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello" + "/cards/" + cardId)
+                .build().encode().toUri();
+        restTemplate.delete(url);
+    }
 }

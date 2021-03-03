@@ -42,7 +42,7 @@ public class NpcView extends VerticalLayout {
 
         form = new NpcForm(creatorClient);
         form.addListener(NpcForm.SaveEvent.class, this::saveNpc);
-        form.addListener(NpcForm.DeleteEvent.class, this::deleteContact);
+        form.addListener(NpcForm.DeleteEvent.class, this::deleteNpc);
         form.addListener(NpcForm.CloseEvent.class, e -> closeEditor());
 
         HorizontalLayout content = new HorizontalLayout(grid, form);
@@ -54,7 +54,10 @@ public class NpcView extends VerticalLayout {
         closeEditor();
     }
 
-    private void deleteContact(NpcForm.DeleteEvent evt) {
+    private void deleteNpc(NpcForm.DeleteEvent evt) {
+        if (evt.getNpc().getTrelloCardId() != null) {
+            creatorClient.deleteTrelloCard(evt.getNpc().getTrelloCardId());
+        }
         creatorClient.deleteNpc(evt.getNpc().getId());
         updateList();
         closeEditor();
