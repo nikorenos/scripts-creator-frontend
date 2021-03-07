@@ -35,8 +35,6 @@ public class NpcForm extends FormLayout {
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
-    Image image = new Image("https://trello-attachments.s3.amazonaws.com/60186a77ae9c0772451ea88e/60186a9af0ca1303489ad2fe/d1821249016a928100ece048ec6c94f3/avatar-avallach3.jpg", "NpcImage");
-
     Binder<NpcDto> binder = new Binder<>(NpcDto.class);
     private NpcDto npcDto;
 
@@ -48,9 +46,6 @@ public class NpcForm extends FormLayout {
             locations.add(list.getName());
         }
 
-        image.setMaxHeight("50");
-        image.setMaxWidth("50");
-
         location.setItems(locations);
         location.setItemLabelGenerator(String::toString);
 
@@ -59,7 +54,6 @@ public class NpcForm extends FormLayout {
                 description,
                 location,
                 attachmentUrl,
-                image,
                 createButtonsLayout()
         );
     }

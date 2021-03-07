@@ -108,7 +108,7 @@ public class NpcView extends VerticalLayout {
         grid.addClassName("npc-grid");
         grid.setSizeFull();
         grid.setColumns("id", "name", "description", "location", "trelloCardUrl");
-        grid.getColumns().forEach(col -> col.setAutoWidth(true));
+        grid.getColumns().forEach(col -> col.setWidth("10px"));
 
         grid.asSingleSelect().addValueChangeListener(evt -> editNpc(evt.getValue()));
     }
