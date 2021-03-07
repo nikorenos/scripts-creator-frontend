@@ -69,11 +69,18 @@ public class NpcView extends VerticalLayout {
             card = prepareTrelloCard(evt.getNpc());
             String cardId = evt.getNpc().getTrelloCardId();
             creatorClient.updateTrelloCard(cardId, card);
+            if (evt.getNpc().getAttachmentUrl() != "") {
+                creatorClient.createTrelloCardAttachment(cardId, evt.getNpc().getAttachmentUrl());
+            }
         } else {
             card = creatorClient.createTrelloCard(prepareTrelloCard(evt.getNpc()));
             evt.getNpc().setTrelloCardId(card.getId());
             evt.getNpc().setTrelloCardUrl(card.getShortUrl());
+            if (evt.getNpc().getAttachmentUrl() != "") {
+                creatorClient.createTrelloCardAttachment(card.getId(), evt.getNpc().getAttachmentUrl());
+            }
         }
+
         creatorClient.createNpc(evt.getNpc());
         updateList();
         closeEditor();
@@ -101,7 +108,7 @@ public class NpcView extends VerticalLayout {
         grid.addClassName("npc-grid");
         grid.setSizeFull();
         grid.setColumns("id", "name", "description", "location", "trelloCardUrl");
-        grid.getColumns().forEach(col -> col.setAutoWidth(true));
+        grid.getColumns().forEach(col -> col.setWidth("10px"));
 
         grid.asSingleSelect().addValueChangeListener(evt -> editNpc(evt.getValue()));
     }

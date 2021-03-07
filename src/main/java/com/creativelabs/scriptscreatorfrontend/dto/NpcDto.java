@@ -13,4 +13,5 @@ public class NpcDto {
     private String location;
     private String trelloCardId;
     private String trelloCardUrl;
+    private String attachmentUrl;
 }

@@ -12,6 +12,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -27,12 +28,12 @@ public class NpcForm extends FormLayout {
     TextField name = new TextField("Name");
     TextField description = new TextField("Description");
     ComboBox<String> location = new ComboBox<>("Location");
+    TextField attachmentUrl = new TextField("Image Url");
     List<String> locations = new ArrayList<>();
 
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
-
 
     Binder<NpcDto> binder = new Binder<>(NpcDto.class);
     private NpcDto npcDto;
@@ -52,6 +53,7 @@ public class NpcForm extends FormLayout {
                 name,
                 description,
                 location,
+                attachmentUrl,
                 createButtonsLayout()
         );
     }
