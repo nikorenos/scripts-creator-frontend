@@ -7,6 +7,7 @@ import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -31,6 +32,7 @@ public class NpcView extends VerticalLayout {
     NpcForm form;
     Grid<NpcDto> grid = new Grid<>(NpcDto.class);
     TextField filterText = new TextField();
+    Image image = new Image("", "NPC");
     private final ScriptsCreatorClient creatorClient;
 
 
@@ -117,6 +119,15 @@ public class NpcView extends VerticalLayout {
         if (npcDto == null) {
             closeEditor();
         } else {
+            if (npcDto.getAttachmentUrl() != null) {
+                image.setSrc(npcDto.getAttachmentUrl());
+                image.setMaxWidth("300px");
+                image.setMaxHeight("400px");
+                form.add(image);
+            }
+            if (npcDto.getAttachmentUrl() == "") {
+                form.remove(image);
+            }
             form.setNpc(npcDto);
             form.setVisible(true);
             addClassName("editing");
@@ -131,6 +142,7 @@ public class NpcView extends VerticalLayout {
     }
 
     private void closeEditor() {
+        form.remove(image);
         form.setNpc(null);
         form.setVisible(false);
         removeClassName("editing");
