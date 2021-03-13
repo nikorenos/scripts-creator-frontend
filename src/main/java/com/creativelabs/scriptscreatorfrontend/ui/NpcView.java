@@ -66,26 +66,33 @@ public class NpcView extends VerticalLayout {
     }
 
     private void saveNpc(NpcForm.SaveEvent evt) {
-        TrelloCardDto card;
-        if (evt.getNpc().getTrelloCardId() != null) {
-            card = prepareTrelloCard(evt.getNpc());
-            String cardId = evt.getNpc().getTrelloCardId();
-            creatorClient.updateTrelloCard(cardId, card);
-            if (evt.getNpc().getAttachmentUrl() != "") {
-                creatorClient.createTrelloCardAttachment(cardId, evt.getNpc().getAttachmentUrl());
-            }
-        } else {
-            card = creatorClient.createTrelloCard(prepareTrelloCard(evt.getNpc()));
-            evt.getNpc().setTrelloCardId(card.getId());
-            evt.getNpc().setTrelloCardUrl(card.getShortUrl());
-            if (evt.getNpc().getAttachmentUrl() != "") {
-                creatorClient.createTrelloCardAttachment(card.getId(), evt.getNpc().getAttachmentUrl());
-            }
-        }
-
+        manageTrelloCard(evt);
         creatorClient.createNpc(evt.getNpc());
         updateList();
         closeEditor();
+    }
+
+    private void manageTrelloCard(NpcForm.SaveEvent evt) {
+        TrelloCardDto card;
+        if (evt.getNpc().getTrelloCardId() == null) {
+            card = creatorClient.createTrelloCard(prepareTrelloCard(evt.getNpc()));
+            evt.getNpc().setTrelloCardId(card.getId());
+            evt.getNpc().setTrelloCardUrl(card.getShortUrl());
+            if (!evt.getNpc().getAttachmentUrl().equals("")) {
+                manageTrelloCardAttachment(card.getId(), evt.getNpc().getAttachmentUrl());
+            }
+        } else {
+            card = prepareTrelloCard(evt.getNpc());
+            String cardId = evt.getNpc().getTrelloCardId();
+            creatorClient.updateTrelloCard(cardId, card);
+            if (!evt.getNpc().getAttachmentUrl().equals("")) {
+                manageTrelloCardAttachment(cardId, evt.getNpc().getAttachmentUrl());
+            }
+        }
+    }
+
+    private void manageTrelloCardAttachment(String cardId, String attachmentUrl) {
+            creatorClient.createTrelloCardAttachment(cardId, attachmentUrl);
     }
 
     private HorizontalLayout getToolBar() {
@@ -122,12 +129,13 @@ public class NpcView extends VerticalLayout {
             if (npcDto.getAttachmentUrl() != null) {
                 image.setSrc(npcDto.getAttachmentUrl());
                 image.setMaxWidth("300px");
-                image.setMaxHeight("400px");
+                image.setMaxHeight("500px");
                 form.add(image);
+                if (npcDto.getAttachmentUrl().equals("")) {
+                    form.remove(image);
+                }
             }
-            if (npcDto.getAttachmentUrl() == "") {
-                form.remove(image);
-            }
+
             form.setNpc(npcDto);
             form.setVisible(true);
             addClassName("editing");
