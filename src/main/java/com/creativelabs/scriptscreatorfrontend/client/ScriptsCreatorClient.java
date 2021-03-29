@@ -2,10 +2,7 @@ package com.creativelabs.scriptscreatorfrontend.client;
 
 import com.creativelabs.scriptscreatorfrontend.config.ClientConfig;
 import com.creativelabs.scriptscreatorfrontend.config.TrelloConfig;
-import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
-import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardAttachmentsDto;
-import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardDto;
-import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
+import com.creativelabs.scriptscreatorfrontend.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +83,30 @@ public class ScriptsCreatorClient {
 
     public void deleteTrelloCard(String cardId) {
         URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello" + "/cards/" + cardId)
+                .build().encode().toUri();
+        restTemplate.delete(url);
+    }
+
+    public List<CampDto> getCamps() {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "Camps")
+                .build().encode().toUri();
+        try {
+            CampDto[] boardsResponse = restTemplate.getForObject(url, CampDto[].class);
+            return Arrays.asList(ofNullable(boardsResponse).orElse(new CampDto[0]));
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(),e);
+            return new ArrayList<>();
+        }
+    }
+
+    public CampDto createCamp(CampDto CampDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "Camps")
+                .build().encode().toUri();
+        return restTemplate.postForObject(url, CampDto, CampDto.class);
+    }
+
+    public void deleteCamp(Long id) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "Camps/" + id)
                 .build().encode().toUri();
         restTemplate.delete(url);
     }

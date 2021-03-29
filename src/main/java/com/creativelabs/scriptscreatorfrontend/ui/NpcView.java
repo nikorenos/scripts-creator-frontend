@@ -92,7 +92,7 @@ public class NpcView extends VerticalLayout {
     }
 
     private void manageTrelloCardAttachment(String cardId, String attachmentUrl) {
-            creatorClient.createTrelloCardAttachment(cardId, attachmentUrl);
+        creatorClient.createTrelloCardAttachment(cardId, attachmentUrl);
     }
 
     private HorizontalLayout getToolBar() {
@@ -116,7 +116,7 @@ public class NpcView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("npc-grid");
         grid.setSizeFull();
-        grid.setColumns("id", "name", "description", "location", "trelloCardUrl");
+        grid.setColumns("id", "scriptId", "name", "description", "location", "trelloCardUrl");
         grid.getColumns().forEach(col -> col.setWidth("10px"));
 
         grid.asSingleSelect().addValueChangeListener(evt -> editNpc(evt.getValue()));
@@ -168,7 +168,7 @@ public class NpcView extends VerticalLayout {
 
         }
         List<String> list = trelloListsMap.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(npcDto.getLocation()))
+                .filter(entry -> entry.getKey().equals("npcDto.getLocation()"))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList());
 
