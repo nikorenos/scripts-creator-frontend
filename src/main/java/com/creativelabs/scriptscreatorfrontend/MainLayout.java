@@ -1,5 +1,6 @@
 package com.creativelabs.scriptscreatorfrontend;
 
+import com.creativelabs.scriptscreatorfrontend.ui.CampView;
 import com.creativelabs.scriptscreatorfrontend.ui.StatsView;
 import com.creativelabs.scriptscreatorfrontend.ui.NpcView;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -39,6 +40,7 @@ public class MainLayout extends AppLayout {
 
         addToDrawer(new VerticalLayout(
                 listLink,
+                new RouterLink("Camps", CampView.class),
                 new RouterLink("Stats", StatsView.class)
         ));
     }

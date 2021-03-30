@@ -63,6 +63,19 @@ public class ScriptsCreatorClient {
         }
     }
 
+    public TrelloListDto createTrelloList(TrelloListDto trelloListDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello/boards/" +
+                trelloConfig.getBoardId() + "/lists")
+                .build().encode().toUri();
+        return restTemplate.postForObject(url, trelloListDto, TrelloListDto.class);
+    }
+
+    public void updateTrelloList(String listId, TrelloListDto trelloListDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello/lists/" + listId)
+                .build().encode().toUri();
+        restTemplate.put(url, trelloListDto);
+    }
+
     public TrelloCardDto createTrelloCard(TrelloCardDto trelloCardDto) {
         URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "trello")
                 .build().encode().toUri();
@@ -88,7 +101,7 @@ public class ScriptsCreatorClient {
     }
 
     public List<CampDto> getCamps() {
-        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "Camps")
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "camps")
                 .build().encode().toUri();
         try {
             CampDto[] boardsResponse = restTemplate.getForObject(url, CampDto[].class);
@@ -99,14 +112,14 @@ public class ScriptsCreatorClient {
         }
     }
 
-    public CampDto createCamp(CampDto CampDto) {
-        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "Camps")
+    public CampDto createCamp(CampDto campDto) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "camps")
                 .build().encode().toUri();
-        return restTemplate.postForObject(url, CampDto, CampDto.class);
+        return restTemplate.postForObject(url, campDto, CampDto.class);
     }
 
     public void deleteCamp(Long id) {
-        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "Camps/" + id)
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "camps/" + id)
                 .build().encode().toUri();
         restTemplate.delete(url);
     }

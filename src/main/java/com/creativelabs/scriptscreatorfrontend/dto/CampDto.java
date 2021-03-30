@@ -10,7 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CampDto {
+    private Long id;
     private String name;
     private String description;
     private String attachmentUrl;
+    private String trelloListId;
 }
