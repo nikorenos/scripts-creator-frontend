@@ -2,6 +2,7 @@ package com.creativelabs.scriptscreatorfrontend.ui;
 
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
 import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
+import com.creativelabs.scriptscreatorfrontend.dto.CampDto;
 import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
 import com.vaadin.flow.component.Component;
@@ -41,9 +42,9 @@ public class NpcForm extends FormLayout {
     public NpcForm(ScriptsCreatorClient creatorClient) {
         addClassName("npc-form");
         binder.bindInstanceFields(this);
-        List<TrelloListDto> locationList = creatorClient.getTrelloLists();
-        for (TrelloListDto list : locationList) {
-            locations.add(list.getName());
+        List<CampDto> campsList = creatorClient.getCamps();
+        for (CampDto camp : campsList) {
+            locations.add(camp.getName());
         }
 
         location.setItems(locations);

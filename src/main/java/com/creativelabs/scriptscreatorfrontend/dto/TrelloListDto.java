@@ -12,8 +12,5 @@ import lombok.Setter;
 public class TrelloListDto {
     private String id;
     private String name;
-
-    public TrelloListDto(String name) {
-        this.name = name;
-    }
+    private Boolean closed;
 }

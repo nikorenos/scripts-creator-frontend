@@ -3,7 +3,6 @@ package com.creativelabs.scriptscreatorfrontend.ui;
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
 import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
 import com.creativelabs.scriptscreatorfrontend.dto.CampDto;
-import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -17,10 +16,7 @@ import com.vaadin.flow.router.Route;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -58,7 +54,10 @@ public class CampView extends VerticalLayout {
 
     private void deleteCamp(CampForm.DeleteEvent evt) {
         if (evt.getCamp().getTrelloListId() != null) {
-            creatorClient.deleteTrelloCard(evt.getCamp().getTrelloListId());
+            TrelloListDto list = new TrelloListDto();
+            String listId = evt.getCamp().getTrelloListId();
+            list.setClosed(true);
+            creatorClient.updateTrelloList(listId, list);
         }
         creatorClient.deleteCamp(evt.getCamp().getId());
         updateList();
@@ -67,15 +66,26 @@ public class CampView extends VerticalLayout {
 
     private void saveCamp(CampForm.SaveEvent evt) {
         TrelloListDto list = manageTrelloList(evt);
-        evt.getCamp().setTrelloListId(list.getId());
-        creatorClient.createCamp(evt.getCamp());
+
+        CampDto campDto = evt.getCamp();
+        campDto.setTrelloListId(list.getId());
+        campDto.setNpcList(new ArrayList<>());
+        creatorClient.createCamp(campDto);
         updateList();
         closeEditor();
     }
 
     private TrelloListDto manageTrelloList(CampForm.SaveEvent evt) {
-        TrelloListDto list = new TrelloListDto(evt.getCamp().getName());
-        return creatorClient.createTrelloList(list);
+        TrelloListDto list = new TrelloListDto();
+        if (evt.getCamp().getTrelloListId() == null) {
+            list.setName(evt.getCamp().getName());
+            return creatorClient.createTrelloList(list);
+        } else {
+            String listId = evt.getCamp().getTrelloListId();
+            list.setName(evt.getCamp().getName());
+            creatorClient.updateTrelloList(listId, list);
+            return list;
+        }
     }
 
 

@@ -2,6 +2,7 @@ package com.creativelabs.scriptscreatorfrontend.ui;
 
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
 import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
+import com.creativelabs.scriptscreatorfrontend.dto.CampDto;
 import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
@@ -17,10 +18,7 @@ import com.vaadin.flow.router.Route;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -66,10 +64,23 @@ public class NpcView extends VerticalLayout {
     }
 
     private void saveNpc(NpcForm.SaveEvent evt) {
-        manageTrelloCard(evt);
-        creatorClient.createNpc(evt.getNpc());
+        //manageTrelloCard(evt);
+        creatorClient.createNpc(setNpcCampId(evt));
         updateList();
         closeEditor();
+    }
+
+    private NpcDto setNpcCampId(NpcForm.SaveEvent evt) {
+        List<CampDto> filteredCamp;
+        NpcDto npc = evt.getNpc();
+        String location = npc.getLocation();
+
+        filteredCamp = creatorClient.getCamps().stream()
+                .filter(n -> n.getName().equals(location))
+                .collect(Collectors.toList());
+        npc.setCampId(filteredCamp.get(0).getId());
+
+        return npc;
     }
 
     private void manageTrelloCard(NpcForm.SaveEvent evt) {
@@ -116,7 +127,7 @@ public class NpcView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("npc-grid");
         grid.setSizeFull();
-        grid.setColumns("id", "scriptId", "name", "description", "location", "trelloCardUrl");
+        grid.setColumns("id", "scriptId", "name", "description", "campId", "location", "trelloCardUrl");
         grid.getColumns().forEach(col -> col.setWidth("10px"));
 
         grid.asSingleSelect().addValueChangeListener(evt -> editNpc(evt.getValue()));
@@ -145,6 +156,17 @@ public class NpcView extends VerticalLayout {
     private void updateList() {
         grid.setItems(creatorClient.getNpcs());
     }
+
+    public void setNpcLocation() {
+        List<NpcDto> npcList = creatorClient.getNpcs();
+        for (NpcDto npc: npcList) {
+            Long campId = npc.getCampId();
+            List<CampDto> filteredCamp = creatorClient.getCamps().stream()
+                    .filter(n -> n.getId() == campId)
+                    .collect(Collectors.toList());
+            npc.setLocation(filteredCamp.get(0).getName());
+        }
+    }
     private void filterNpc() {
         grid.setItems(findNpcByName(filterText.getValue()));
     }
@@ -161,6 +183,19 @@ public class NpcView extends VerticalLayout {
     }
 
     public TrelloCardDto prepareTrelloCard(NpcDto npcDto) {
+        List<CampDto> filteredCamp = new ArrayList<>();
+        String location = npcDto.getLocation();
+        Long campId = npcDto.getCampId();
+        filteredCamp = creatorClient.getCamps().stream()
+                    .filter(n -> n.getName().equals(location))
+                    .collect(Collectors.toList());
+
+        System.out.println("filteredCamp : " + filteredCamp);
+        System.out.println("filteredCamp : " + filteredCamp.get(0).getTrelloListId());
+
+        return new TrelloCardDto(npcDto.getName(), npcDto.getDescription(), "bottom", filteredCamp.get(0).getTrelloListId());
+
+        /*
         HashMap<String, String> trelloListsMap = new HashMap<>();
         List<TrelloListDto> trelloLists = creatorClient.getTrelloLists();
         for (TrelloListDto list : trelloLists) {
@@ -173,7 +208,7 @@ public class NpcView extends VerticalLayout {
                 .collect(Collectors.toList());
 
         String idList = list.get(0);
-        return new TrelloCardDto(npcDto.getName(), npcDto.getDescription(), "bottom", idList);
+        return new TrelloCardDto(npcDto.getName(), npcDto.getDescription(), "bottom", idList);*/
     }
 
 }
