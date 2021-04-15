@@ -126,8 +126,8 @@ public class CampView extends VerticalLayout {
         } else {
             if (campDto.getAttachmentUrl() != null) {
                 image.setSrc(campDto.getAttachmentUrl());
-                image.setMaxWidth("300px");
-                image.setMaxHeight("500px");
+                image.setMaxWidth("500px");
+                image.setMaxHeight("800px");
                 form.add(image);
                 if (campDto.getAttachmentUrl().equals("")) {
                     form.remove(image);
