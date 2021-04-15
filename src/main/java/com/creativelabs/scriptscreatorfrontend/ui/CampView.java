@@ -65,11 +65,15 @@ public class CampView extends VerticalLayout {
     }
 
     private void saveCamp(CampForm.SaveEvent evt) {
-        TrelloListDto list = manageTrelloList(evt);
+        TrelloListDto trelloList = manageTrelloList(evt);
 
         CampDto campDto = evt.getCamp();
-        campDto.setTrelloListId(list.getId());
-        campDto.setNpcList(new ArrayList<>());
+        if (evt.getCamp().getTrelloListId() == null) {
+            campDto.setTrelloListId(trelloList.getId());
+        }
+        if (evt.getCamp().getNpcList() == null) {
+            campDto.setNpcList(new ArrayList<>());
+        }
         creatorClient.createCamp(campDto);
         updateList();
         closeEditor();
