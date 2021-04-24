@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Scope("prototype")
-@Route(value = "npcsList", layout = MainLayout.class)
+@Route(value = "npcList", layout = MainLayout.class)
 @PageTitle("Npcs | Scripts Creator")
 public class NpcView extends VerticalLayout {
 
@@ -64,34 +64,38 @@ public class NpcView extends VerticalLayout {
     }
 
     private void saveNpc(NpcForm.SaveEvent evt) {
-        //manageTrelloCard(evt);
-        creatorClient.createNpc(setNpcCampId(evt));
+        NpcDto npcDto;
+        npcDto = setNpcCampId(manageTrelloCard(evt));
+        creatorClient.createNpc(npcDto);
         updateList();
         closeEditor();
     }
 
-    private NpcDto setNpcCampId(NpcForm.SaveEvent evt) {
+    private NpcDto setNpcCampId(NpcDto npcDto) {
         List<CampDto> filteredCamp;
-        NpcDto npc = evt.getNpc();
-        String location = npc.getLocation();
+        String location = npcDto.getLocation();
 
         filteredCamp = creatorClient.getCamps().stream()
                 .filter(n -> n.getName().equals(location))
                 .collect(Collectors.toList());
-        npc.setCampId(filteredCamp.get(0).getId());
+        npcDto.setCampId(filteredCamp.get(0).getId());
+        npcDto.setLocation(location);
 
-        return npc;
+        return npcDto;
     }
 
-    private void manageTrelloCard(NpcForm.SaveEvent evt) {
+    private NpcDto manageTrelloCard(NpcForm.SaveEvent evt) {
         TrelloCardDto card;
         if (evt.getNpc().getTrelloCardId() == null) {
             card = creatorClient.createTrelloCard(prepareTrelloCard(evt.getNpc()));
+            System.out.println(card.getId());
+            System.out.println(card.getShortUrl());
             evt.getNpc().setTrelloCardId(card.getId());
             evt.getNpc().setTrelloCardUrl(card.getShortUrl());
             if (!evt.getNpc().getAttachmentUrl().equals("")) {
                 manageTrelloCardAttachment(card.getId(), evt.getNpc().getAttachmentUrl());
             }
+            return evt.getNpc();
         } else {
             card = prepareTrelloCard(evt.getNpc());
             String cardId = evt.getNpc().getTrelloCardId();
@@ -99,6 +103,7 @@ public class NpcView extends VerticalLayout {
             if (!evt.getNpc().getAttachmentUrl().equals("")) {
                 manageTrelloCardAttachment(cardId, evt.getNpc().getAttachmentUrl());
             }
+            return evt.getNpc();
         }
     }
 
@@ -157,16 +162,6 @@ public class NpcView extends VerticalLayout {
         grid.setItems(creatorClient.getNpcs());
     }
 
-    public void setNpcLocation() {
-        List<NpcDto> npcList = creatorClient.getNpcs();
-        for (NpcDto npc: npcList) {
-            Long campId = npc.getCampId();
-            List<CampDto> filteredCamp = creatorClient.getCamps().stream()
-                    .filter(n -> n.getId() == campId)
-                    .collect(Collectors.toList());
-            npc.setLocation(filteredCamp.get(0).getName());
-        }
-    }
     private void filterNpc() {
         grid.setItems(findNpcByName(filterText.getValue()));
     }
@@ -183,32 +178,13 @@ public class NpcView extends VerticalLayout {
     }
 
     public TrelloCardDto prepareTrelloCard(NpcDto npcDto) {
-        List<CampDto> filteredCamp = new ArrayList<>();
+        List<CampDto> filteredCamp;
         String location = npcDto.getLocation();
-        Long campId = npcDto.getCampId();
         filteredCamp = creatorClient.getCamps().stream()
                     .filter(n -> n.getName().equals(location))
                     .collect(Collectors.toList());
 
-        System.out.println("filteredCamp : " + filteredCamp);
-        System.out.println("filteredCamp : " + filteredCamp.get(0).getTrelloListId());
-
         return new TrelloCardDto(npcDto.getName(), npcDto.getDescription(), "bottom", filteredCamp.get(0).getTrelloListId());
-
-        /*
-        HashMap<String, String> trelloListsMap = new HashMap<>();
-        List<TrelloListDto> trelloLists = creatorClient.getTrelloLists();
-        for (TrelloListDto list : trelloLists) {
-            trelloListsMap.put(list.getName(), list.getId());
-
-        }
-        List<String> list = trelloListsMap.entrySet().stream()
-                .filter(entry -> entry.getKey().equals("npcDto.getLocation()"))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-
-        String idList = list.get(0);
-        return new TrelloCardDto(npcDto.getName(), npcDto.getDescription(), "bottom", idList);*/
     }
 
 }
