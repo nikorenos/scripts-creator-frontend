@@ -35,12 +35,12 @@ public class MainLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        RouterLink listLink = new RouterLink("Npc List", NpcView.class);
+        RouterLink listLink = new RouterLink("Npc", NpcView.class);
         listLink.setHighlightCondition(HighlightConditions.sameLocation());
 
         addToDrawer(new VerticalLayout(
                 listLink,
-                new RouterLink("Camps", CampView.class),
+                new RouterLink("Camp", CampView.class),
                 new RouterLink("Stats", StatsView.class)
         ));
     }
