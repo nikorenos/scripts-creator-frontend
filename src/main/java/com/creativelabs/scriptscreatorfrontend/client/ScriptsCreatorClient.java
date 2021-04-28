@@ -31,11 +31,23 @@ public class ScriptsCreatorClient {
         URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs")
                 .build().encode().toUri();
         try {
-            NpcDto[] boardsResponse = restTemplate.getForObject(url, NpcDto[].class);
-            return Arrays.asList(ofNullable(boardsResponse).orElse(new NpcDto[0]));
+            NpcDto[] response = restTemplate.getForObject(url, NpcDto[].class);
+            return Arrays.asList(ofNullable(response).orElse(new NpcDto[0]));
         } catch (RestClientException e) {
             LOGGER.error(e.getMessage(),e);
             return new ArrayList<>();
+        }
+    }
+
+    public NpcDto getNpc(Long id) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs/" + id)
+                .build().encode().toUri();
+        try {
+            NpcDto response = restTemplate.getForObject(url, NpcDto.class);
+            return (ofNullable(response).orElse(new NpcDto()));
+        } catch (RestClientException e) {
+            LOGGER.error(e.getMessage(),e);
+            return new NpcDto();
         }
     }
 
