@@ -57,6 +57,12 @@ public class ScriptsCreatorClient {
         return restTemplate.postForObject(url, npcDto, NpcDto.class);
     }
 
+    public void updateNpc(NpcDto npcDto, Long id) {
+        URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs/" + id)
+                .build().encode().toUri();
+        restTemplate.put(url, npcDto);
+    }
+
     public void deleteNpc(Long id) {
         URI url = UriComponentsBuilder.fromHttpUrl(clientConfig.getBackApiAddress() + "npcs/" + id)
                 .build().encode().toUri();
