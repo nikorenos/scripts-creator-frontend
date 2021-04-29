@@ -5,12 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TrelloListDto {
-    private String id;
+public class CampDto {
+    private Long id;
     private String name;
-    private Boolean closed;
+    private String description;
+    private String attachmentUrl;
+    private String trelloListId;
+    private List<NpcDto> npcList;
 }

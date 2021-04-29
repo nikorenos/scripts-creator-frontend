@@ -3,7 +3,6 @@ package com.creativelabs.scriptscreatorfrontend.ui;
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
 import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
 import com.creativelabs.scriptscreatorfrontend.dto.CampDto;
-import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
@@ -23,12 +22,11 @@ import com.vaadin.flow.shared.Registration;
 
 import java.util.*;
 
-@Route(value = "npcForm", layout = MainLayout.class)
-public class NpcForm extends FormLayout {
+@Route(value = "campForm", layout = MainLayout.class)
+public class CampForm extends FormLayout {
 
     TextField name = new TextField("Name");
     TextField description = new TextField("Description");
-    ComboBox<String> location = new ComboBox<>("Location");
     TextField attachmentUrl = new TextField("Image Url");
     List<String> locations = new ArrayList<>();
 
@@ -36,32 +34,28 @@ public class NpcForm extends FormLayout {
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
-    Binder<NpcDto> binder = new Binder<>(NpcDto.class);
-    private NpcDto npcDto;
+    Binder<CampDto> binder = new Binder<>(CampDto.class);
+    private CampDto campDto;
 
-    public NpcForm(ScriptsCreatorClient creatorClient) {
-        addClassName("npc-form");
+    public CampForm(ScriptsCreatorClient creatorClient) {
+        addClassName("camp-form");
         binder.bindInstanceFields(this);
-        List<CampDto> campsList = creatorClient.getCamps();
-        for (CampDto camp : campsList) {
-            locations.add(camp.getName());
+        List<TrelloListDto> locationList = creatorClient.getTrelloLists();
+        for (TrelloListDto list : locationList) {
+            locations.add(list.getName());
         }
-
-        location.setItems(locations);
-        location.setItemLabelGenerator(String::toString);
 
         add(
                 name,
                 description,
-                location,
                 attachmentUrl,
                 createButtonsLayout()
         );
     }
 
-    public void setNpc(NpcDto npcDto) {
-        this.npcDto = npcDto;
-        binder.readBean(npcDto);
+    public void setCamp(CampDto campDto) {
+        this.campDto = campDto;
+        binder.readBean(campDto);
     }
 
     private Component createButtonsLayout() {
@@ -73,7 +67,7 @@ public class NpcForm extends FormLayout {
         close.addClickShortcut(Key.ESCAPE);
 
         save.addClickListener(click -> validateAndSave());
-        delete.addClickListener(click -> fireEvent(new DeleteEvent(this, npcDto)));
+        delete.addClickListener(click -> fireEvent(new DeleteEvent(this, campDto)));
         close.addClickListener(click -> fireEvent(new CloseEvent(this)));
 
         binder.addStatusChangeListener(evt -> save.setEnabled(binder.isValid()));
@@ -83,43 +77,43 @@ public class NpcForm extends FormLayout {
 
     private void validateAndSave() {
         try {
-            binder.writeBean(npcDto);
-            fireEvent(new SaveEvent(this, npcDto));
+            binder.writeBean(campDto);
+            fireEvent(new SaveEvent(this, campDto));
         } catch (ValidationException e) {
             e.printStackTrace();
         }
     }
 
     // Events
-    public static abstract class NpcFormEvent extends ComponentEvent<NpcForm> {
-        private final NpcDto npcDto;
+    public static abstract class CampFormEvent extends ComponentEvent<CampForm> {
+        private final CampDto campDto;
 
-        protected NpcFormEvent(NpcForm source, NpcDto npcDto) {
+        protected CampFormEvent(CampForm source, CampDto campDto) {
             super(source, false);
-            this.npcDto = npcDto;
+            this.campDto = campDto;
         }
 
-        public NpcDto getNpc() {
-            return npcDto;
+        public CampDto getCamp() {
+            return campDto;
         }
     }
 
-    public static class SaveEvent extends NpcFormEvent {
-            SaveEvent(NpcForm source, NpcDto npc) {
-                super(source, npc);
-            }
+    public static class SaveEvent extends CampFormEvent {
+        SaveEvent(CampForm source, CampDto camp) {
+            super(source, camp);
+        }
     }
 
 
-    public static class DeleteEvent extends NpcFormEvent {
-        DeleteEvent(NpcForm source, NpcDto npcDto) {
-            super(source, npcDto);
+    public static class DeleteEvent extends CampFormEvent {
+        DeleteEvent(CampForm source, CampDto campDto) {
+            super(source, campDto);
         }
 
     }
 
-    public static class CloseEvent extends NpcFormEvent {
-        CloseEvent(NpcForm source) {
+    public static class CloseEvent extends CampFormEvent {
+        CloseEvent(CampForm source) {
             super(source, null);
         }
     }

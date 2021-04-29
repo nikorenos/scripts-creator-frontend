@@ -2,6 +2,7 @@ package com.creativelabs.scriptscreatorfrontend.ui;
 
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
 import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
+import com.creativelabs.scriptscreatorfrontend.dto.CampDto;
 import com.creativelabs.scriptscreatorfrontend.dto.NpcDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloCardDto;
 import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
@@ -17,15 +18,12 @@ import com.vaadin.flow.router.Route;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 @Scope("prototype")
-@Route(value = "npcsList", layout = MainLayout.class)
+@Route(value = "npcList", layout = MainLayout.class)
 @PageTitle("Npcs | Scripts Creator")
 public class NpcView extends VerticalLayout {
 
@@ -66,13 +64,33 @@ public class NpcView extends VerticalLayout {
     }
 
     private void saveNpc(NpcForm.SaveEvent evt) {
-        manageTrelloCard(evt);
-        creatorClient.createNpc(evt.getNpc());
+        NpcDto npcDto;
+        npcDto = setNpcCampId(manageTrelloCard(evt));
+        if (evt.getNpc().getId() == null) {
+            creatorClient.createNpc(npcDto);
+        } else {
+            npcDto.setAttachmentUrl(npcDto.getAttachmentUrl());
+            creatorClient.updateNpc(npcDto, evt.getNpc().getId());
+        }
+
         updateList();
         closeEditor();
     }
 
-    private void manageTrelloCard(NpcForm.SaveEvent evt) {
+    private NpcDto setNpcCampId(NpcDto npcDto) {
+        List<CampDto> filteredCamp;
+        String location = npcDto.getLocation();
+
+        filteredCamp = creatorClient.getCamps().stream()
+                .filter(n -> n.getName().equals(location))
+                .collect(Collectors.toList());
+        npcDto.setCampId(filteredCamp.get(0).getId());
+        npcDto.setLocation(location);
+
+        return npcDto;
+    }
+
+    private NpcDto manageTrelloCard(NpcForm.SaveEvent evt) {
         TrelloCardDto card;
         if (evt.getNpc().getTrelloCardId() == null) {
             card = creatorClient.createTrelloCard(prepareTrelloCard(evt.getNpc()));
@@ -80,19 +98,27 @@ public class NpcView extends VerticalLayout {
             evt.getNpc().setTrelloCardUrl(card.getShortUrl());
             if (!evt.getNpc().getAttachmentUrl().equals("")) {
                 manageTrelloCardAttachment(card.getId(), evt.getNpc().getAttachmentUrl());
+                evt.getNpc().setAttachmentUrl(evt.getNpc().getAttachmentUrl());
             }
+            return evt.getNpc();
         } else {
             card = prepareTrelloCard(evt.getNpc());
             String cardId = evt.getNpc().getTrelloCardId();
             creatorClient.updateTrelloCard(cardId, card);
             if (!evt.getNpc().getAttachmentUrl().equals("")) {
-                manageTrelloCardAttachment(cardId, evt.getNpc().getAttachmentUrl());
+                Long npcId = evt.getNpc().getId();
+                String savedAttachmentUrl = creatorClient.getNpc(npcId).getAttachmentUrl();
+                if (!evt.getNpc().getAttachmentUrl().equals(savedAttachmentUrl)) {
+                    manageTrelloCardAttachment(cardId, evt.getNpc().getAttachmentUrl());
+                    evt.getNpc().setAttachmentUrl(evt.getNpc().getAttachmentUrl());
+                }
             }
+            return evt.getNpc();
         }
     }
 
     private void manageTrelloCardAttachment(String cardId, String attachmentUrl) {
-            creatorClient.createTrelloCardAttachment(cardId, attachmentUrl);
+        creatorClient.createTrelloCardAttachment(cardId, attachmentUrl);
     }
 
     private HorizontalLayout getToolBar() {
@@ -116,7 +142,7 @@ public class NpcView extends VerticalLayout {
     private void configureGrid() {
         grid.addClassName("npc-grid");
         grid.setSizeFull();
-        grid.setColumns("id", "name", "description", "location", "trelloCardUrl");
+        grid.setColumns("id", "scriptId", "name", "description", "campId", "location", "trelloCardUrl");
         grid.getColumns().forEach(col -> col.setWidth("10px"));
 
         grid.asSingleSelect().addValueChangeListener(evt -> editNpc(evt.getValue()));
@@ -145,6 +171,7 @@ public class NpcView extends VerticalLayout {
     private void updateList() {
         grid.setItems(creatorClient.getNpcs());
     }
+
     private void filterNpc() {
         grid.setItems(findNpcByName(filterText.getValue()));
     }
@@ -161,19 +188,13 @@ public class NpcView extends VerticalLayout {
     }
 
     public TrelloCardDto prepareTrelloCard(NpcDto npcDto) {
-        HashMap<String, String> trelloListsMap = new HashMap<>();
-        List<TrelloListDto> trelloLists = creatorClient.getTrelloLists();
-        for (TrelloListDto list : trelloLists) {
-            trelloListsMap.put(list.getName(), list.getId());
+        List<CampDto> filteredCamp;
+        String location = npcDto.getLocation();
+        filteredCamp = creatorClient.getCamps().stream()
+                    .filter(n -> n.getName().equals(location))
+                    .collect(Collectors.toList());
 
-        }
-        List<String> list = trelloListsMap.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(npcDto.getLocation()))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toList());
-
-        String idList = list.get(0);
-        return new TrelloCardDto(npcDto.getName(), npcDto.getDescription(), "bottom", idList);
+        return new TrelloCardDto(npcDto.getName(), npcDto.getDescription(), "bottom", filteredCamp.get(0).getTrelloListId());
     }
 
 }
