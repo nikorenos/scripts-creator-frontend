@@ -2,7 +2,7 @@ package com.creativelabs.scriptscreatorfrontend.ui;
 
 import com.creativelabs.scriptscreatorfrontend.MainLayout;
 import com.creativelabs.scriptscreatorfrontend.client.ScriptsCreatorClient;
-import com.creativelabs.scriptscreatorfrontend.dto.TrelloListDto;
+import com.creativelabs.scriptscreatorfrontend.dto.CampDto;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -19,7 +19,7 @@ public class StatsView extends VerticalLayout {
     private final ScriptsCreatorClient creatorClient;
     int allNpcs = 0;
     int amountOfLocations = 0;
-    List<TrelloListDto> locations = new ArrayList<>();
+    List<CampDto> locations = new ArrayList<>();
 
     public StatsView(ScriptsCreatorClient creatorClient) {
         this.creatorClient = creatorClient;
@@ -34,23 +34,23 @@ public class StatsView extends VerticalLayout {
         H1 logo = new H1("Stats:");
 
         allNpcs = creatorClient.getNpcs().size();
-        amountOfLocations = creatorClient.getTrelloLists().size();
-        locations = creatorClient.getTrelloLists();
+        amountOfLocations = creatorClient.getCamps().size();
+        locations = creatorClient.getCamps();
 
-        Label labelAllNpcs = new Label("All NPCs in database: " + allNpcs);
-        Label labelAmountOfLocations = new Label("All locations in Trello: " + amountOfLocations);
-        Label labelLocations = new Label("Available locations in Trello: " + displayLocationFromTrello(locations));
+        Label labelAllNpcs = new Label("Amount of NPCs: " + allNpcs);
+        Label labelAmountOfLocations = new Label("Amount of camps: " + amountOfLocations);
+        Label labelLocations = new Label("Created camps with NPCs: " + displayLocations(locations));
         VerticalLayout content = new VerticalLayout(logo,labelAllNpcs, labelAmountOfLocations, labelLocations);
         content.addClassName("content");
         content.setSizeFull();
         return  content;
     }
 
-    public String displayLocationFromTrello(List<TrelloListDto> lists) {
-        StringBuilder names = new StringBuilder();
-        for (TrelloListDto list : lists) {
-            names.append(list.getName()).append(", ");
+    public String displayLocations(List<CampDto> lists) {
+        String campsList = "";
+        for (CampDto list : lists) {
+            campsList = campsList + list.getName() + "(" + list.getNpcList().size() + ")" + ", ";
         }
-        return names.toString();
+        return campsList.substring(0, campsList.length()-2) + ".";
     }
 }
